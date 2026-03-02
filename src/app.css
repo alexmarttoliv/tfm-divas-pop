@@ -1,0 +1,23 @@
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f8f2df;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c9587a;
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a8405f;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c9587a #f8f2df;
+}
