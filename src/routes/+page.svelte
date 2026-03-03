@@ -764,20 +764,38 @@
     margin: 0;
     background-color: #f8f2df;
     overflow-x: hidden;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif; /* texto corrido */
   }
 
   main {
     max-width: 100%;
     margin: 0 auto;
     padding: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     color: #333;
   }
 
   .spacer {
     height: 1.5rem;
   }
+
+  h1,
+  h2,
+  .hero-title,
+  .intro-heading,
+  .cierre-heading,
+  .cierre-label,
+  .label,
+  .count,
+  .diva-name,
+  .album-name,
+  .metodo-num,
+  .metodo-step h4,
+  .metodologia-toggle,
+  .albums-title {
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  }
+
 
 
   h1 {
@@ -1800,6 +1818,7 @@
   }
 
   .prompt-label {
+    font-family: 'Courier New', monospace;
     display: block;
     font-size: 0.7rem;
     text-transform: uppercase;
