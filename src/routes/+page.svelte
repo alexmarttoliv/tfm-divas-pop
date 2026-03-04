@@ -396,10 +396,6 @@
 <!-- HERO: título com fade out no scroll -->
 <section class="hero" style="opacity: {Math.max(0, 1 - scrollY / 400)};">
 
-  <p style="position:fixed; top:0; left:0; z-index:9999; background:red; color:white;">
-  width: {windowWidth}
-</p>
-
   <div class="hero-content">
     <h1 class="hero-title">
       ¿Cómo se volvió emocionalmente<br>más complejo<br>el pop de las <span class="diva-word">divas</span>?
