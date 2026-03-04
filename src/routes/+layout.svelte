@@ -1,5 +1,5 @@
 <script>
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/star.svg';
 	import '../app.css';
 
 	import '@fontsource/poppins/400.css';

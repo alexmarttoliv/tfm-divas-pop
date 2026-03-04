@@ -14,6 +14,9 @@
   import { base } from '$app/paths';
 
 
+  let windowWidth = 1300;
+  let showWarning = true;
+
   let emotionData = [];
   let valenceData = [];
   let scatterData = [];
@@ -53,6 +56,7 @@
 
   onMount(() => {
     windowHeight = window.innerHeight;
+    windowWidth = window.innerWidth;
     
     // Atualiza se a janela for redimensionada
     const handleResize = () => windowHeight = window.innerHeight;
@@ -60,7 +64,7 @@
     return () => window.removeEventListener('resize', handleResize);
   });
 
-  // Agora isso é seguro — windowHeight começa em 0 no servidor
+
   $: videoOpacity = windowHeight > 0 && scrollY < windowHeight * 0.8 ? 0.85 : 0;
 
 
@@ -359,7 +363,16 @@
 </script>
 
 
-<svelte:window bind:scrollY />
+<svelte:window bind:scrollY bind:innerWidth={windowWidth} />
+
+  {#if windowWidth < 1280 && showWarning}
+    <div class="mobile-warning">
+      <span class="mobile-icon">🖥️</span>
+      <p>Este sitio está optimizado para pantallas más grandes.</p>
+      <p>Para una mejor experiencia, ábrelo en un ordenador o tablet.</p>
+      <button on:click={() => showWarning = false}>Continuar de todas formas</button>
+    </div>
+  {/if}
 
   <video
     autoplay loop muted playsinline
@@ -383,7 +396,9 @@
 <!-- HERO: título com fade out no scroll -->
 <section class="hero" style="opacity: {Math.max(0, 1 - scrollY / 400)};">
 
-
+  <p style="position:fixed; top:0; left:0; z-index:9999; background:red; color:white;">
+  width: {windowWidth}
+</p>
 
   <div class="hero-content">
     <h1 class="hero-title">
@@ -767,6 +782,53 @@
     overflow-x: hidden;
     font-family: 'Merriweather', Georgia, 'Times New Roman', serif; /* texto corrido */
   }
+
+  .mobile-warning {
+    position: fixed;
+    inset: 0;
+    background: rgba(248, 242, 223, 0.97);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    gap: 1rem;
+  }
+
+  .mobile-icon {
+    font-size: 3rem;
+  }
+
+  .mobile-warning p {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    color: #333;
+    max-width: 320px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .mobile-warning button {
+    margin-top: 1rem;
+    background: none;
+    border: 1.5px solid #c9587a;
+    color: #c9587a;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-warning button:hover {
+    background: #c9587a;
+    color: white;
+  }
+
 
   main {
     max-width: 100%;
