@@ -9,47 +9,47 @@ export const emotions = [
 
 export const decadeArtists = {
   1970: [
-    { name: "Cher", image: "/artists/cher.png" }
+    { name: "Cher", image: "cher.png" }
   ],
   1980: [
-    { name: "Madonna", image: "/artists/madonna.png" },
-    { name: "Whitney Houston", image: "/artists/whitney.png" },
-    { name: "Cyndi Lauper", image: "/artists/cyndi.png" },
-    { name: "Kylie Minogue", image: "/artists/kylie.png" }
+    { name: "Madonna", image: "madonna.png" },
+    { name: "Whitney Houston", image: "whitney.png" },
+    { name: "Cyndi Lauper", image: "cyndi.png" },
+    { name: "Kylie Minogue", image: "kylie.png" }
   ],
   1990: [
-    { name: "Mariah Carey", image: "/artists/mariah.png" },
-    { name: "Shakira", image: "/artists/shakira.png" },
-    { name: "Britney Spears", image: "/artists/britney.png" },
-    { name: "Christina Aguilera", image: "/artists/christina.png" }
+    { name: "Mariah Carey", image: "mariah.png" },
+    { name: "Shakira", image: "shakira.png" },
+    { name: "Britney Spears", image: "britney.png" },
+    { name: "Christina Aguilera", image: "christina.png" }
   ],
   2000: [
-    { name: "Jennifer Lopez", image: "/artists/jennifer.png" },
-    { name: "Beyoncé", image: "/artists/beyonce.png" },
-    { name: "Rihanna", image: "/artists/rihanna.png" },
-    { name: "Lady Gaga", image: "/artists/gaga.png" },
-    { name: "Demi Lovato", image: "/artists/demi.png" },
-    { name: "Fergie", image: "/artists/fergie.png" },
-    { name: "Katy Perry", image: "/artists/katy.png" },
-    { name: "Miley Cyrus", image: "/artists/miley.png" }
+    { name: "Jennifer Lopez", image: "jennifer.png" },
+    { name: "Beyoncé", image: "beyonce.png" },
+    { name: "Rihanna", image: "rihanna.png" },
+    { name: "Lady Gaga", image: "gaga.png" },
+    { name: "Demi Lovato", image: "demi.png" },
+    { name: "Fergie", image: "fergie.png" },
+    { name: "Katy Perry", image: "katy.png" },
+    { name: "Miley Cyrus", image: "miley.png" }
   ],
   2010: [
-    { name: "Adele", image: "/artists/adele.png" },
-    { name: "Taylor Swift", image: "/artists/taylor.png" },
-    { name: "Lana Del Rey", image: "/artists/lana.png" },
-    { name: "Ariana Grande", image: "/artists/ariana.png" },
-    { name: "Camila Cabello", image: "/artists/camila.png" },
-    { name: "Charli XCX", image: "/artists/charli.png" },
-    { name: "Dua Lipa", image: "/artists/dua.png" },
-    { name: "Rosalía", image: "/artists/rosalia.png" },
-    { name: "Selena Gomez", image: "/artists/selena.png" },
+    { name: "Adele", image: "adele.png" },
+    { name: "Taylor Swift", image: "taylor.png" },
+    { name: "Lana Del Rey", image: "lana.png" },
+    { name: "Ariana Grande", image: "ariana.png" },
+    { name: "Camila Cabello", image: "camila.png" },
+    { name: "Charli XCX", image: "charli.png" },
+    { name: "Dua Lipa", image: "dua.png" },
+    { name: "Rosalía", image: "rosalia.png" },
+    { name: "Selena Gomez", image: "selena.png" },
   ],
   2020: [
-    { name: "Sabrina Carpenter", image: "/artists/sabrina.png" },
-    { name: "Billie Eilish", image: "/artists/billie.png" },
-    { name: "Olivia Rodrigo", image: "/artists/olivia.png" },
-    { name: "Chappell Roan", image: "/artists/chappell.png" },
-    { name: "Tate McRae", image: "/artists/tate.png" }
+    { name: "Sabrina Carpenter", image: "sabrina.png" },
+    { name: "Billie Eilish", image: "billie.png" },
+    { name: "Olivia Rodrigo", image: "olivia.png" },
+    { name: "Chappell Roan", image: "chappell.png" },
+    { name: "Tate McRae", image: "tate.png" }
   ]
 };
 

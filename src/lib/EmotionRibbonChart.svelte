@@ -3,6 +3,7 @@
   import { mount, onMount, tick } from "svelte";
   import scrollama from "scrollama";
   import { emotions, decadeArtists } from '$lib/config.js';
+  import { base } from '$app/paths';
 
   export let data = [];
 
@@ -309,7 +310,7 @@
                     transition-delay: {delay}ms;
                   "
                 >
-                  <img src={artist.image} alt={artist.name} />
+                  <img src={`${base}/artists/${artist.image}`} alt={artist.name} />
                 </div>
               {/each}
             {/if}

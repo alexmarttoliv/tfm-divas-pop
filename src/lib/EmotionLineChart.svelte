@@ -5,6 +5,7 @@
   import { linear } from "svelte/easing";
   import scrollama from "scrollama";
   import { emotions, decadeArtists } from '$lib/config.js';
+  import { base } from '$app/paths';
 
   export let data = [];
 
@@ -300,7 +301,7 @@
                   <div class="artist-strip">
                     <div class="artist-row">
                       {#each decadeArtists[d.decade] as artist}
-                        <img src={artist.image} alt={artist.name} title={artist.name} />
+                        <img src={`${base}/artists/${artist.image}`} alt={artist.name} title={artist.name} />         
                       {/each}
                     </div>
                   </div>

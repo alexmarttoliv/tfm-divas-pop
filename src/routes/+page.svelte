@@ -3,15 +3,16 @@
   import { fade } from 'svelte/transition';
   import { csv } from "d3-fetch";
   import { gsap } from 'gsap';
-
+ 
   import EmotionLineChart from "$lib/EmotionLineChart.svelte";
   import EmotionRibbonChart from "$lib/EmotionRibbonChart.svelte";
   import ValenceActivationChart from "$lib/ValenceActivationLine.svelte";
   import ValenceActivationScatter from "$lib/ValenceActivationScatter.svelte";
   import ComparisonChart from "$lib/ComparisonChart.svelte";
 
-
   import { emotions, divas } from '$lib/config.js';
+  import { base } from '$app/paths';
+
 
   let emotionData = [];
   let valenceData = [];
@@ -66,7 +67,7 @@
 
   onMount(async () => {
     emotionData = await csv(
-      "/data/graph_linha_media_emocoes_decade.csv",
+      `${base}/data/graph_linha_media_emocoes_decade.csv`,
       d => ({
         decade: +d.decade,
         joy: +d.emocion_alegria,
@@ -79,7 +80,7 @@
     );
 
     valenceData = await csv(
-      "/data/graph_media_valencia_activacion_decade.csv",
+      `${base}/data/graph_media_valencia_activacion_decade.csv`,
       d => ({
         decade: +d.decade,
         valence: +d.valencia,
@@ -88,7 +89,7 @@
     );
 
     scatterData = await csv(
-      "/data/graph_scatter_valencia_activacion.csv",
+      `${base}/data/graph_scatter_valencia_activacion.csv`,
       d => ({
         year: +d.release_year,
         valence: +d.valencia,
@@ -108,7 +109,7 @@
       })
     );
 
-    albumsData = await csv("/data/albums.csv", d => ({
+    albumsData = await csv(`${base}/data/albums.csv`, d => ({
       diva_name: d.diva_name,
       album_name: d.album_name,
       release_year: +d.release_year,
@@ -376,7 +377,7 @@
     "
     id="paparazzi-video"
   >
-    <source src="/flare.mp4" type="video/mp4" />
+    <source src="{base}/flare.mp4" type="video/mp4" />
   </video>
 
 <!-- HERO: título com fade out no scroll -->
