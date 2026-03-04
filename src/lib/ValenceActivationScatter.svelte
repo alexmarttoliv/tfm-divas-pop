@@ -4,6 +4,7 @@
   import { onMount, tick } from "svelte";
   import { forceSimulation, forceX, forceY, forceCollide } from "d3-force";
   import { emotions, divas } from '$lib/config.js';
+  import { base } from '$app/paths';
 
   export let data = [];
 
@@ -26,7 +27,7 @@
 
   /* ── ARTISTAS E FOTOS ── */
   const divaImages = Object.fromEntries(
-    divas.map(d => [d.name, `/artists/${d.file}`])
+    divas.map(d => [d.name, `${base}/artists/${d.file}`])
   );
 
   // ── MODO DE EXIBIÇÃO ──

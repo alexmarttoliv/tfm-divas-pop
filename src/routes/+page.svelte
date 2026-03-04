@@ -500,7 +500,7 @@
             <div class="diva-card" class:selected={selectedDiva === diva.name} data-diva={diva.name}>
               <button class="diva-button" on:click={() => handleDivaClick(diva.name)} aria-label="Ver álbumes de {diva.name}">
                 <div class="image-wrapper">
-                  <img src="/artists/{diva.file}" alt="Foto de {diva.name}" loading="lazy" />
+                  <img src={`${base}/artists/${diva.file}`} alt="Foto de {diva.name}" loading="lazy" />
                 </div>
                 <span class="diva-name">{diva.name}</span>
               </button>
