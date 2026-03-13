@@ -890,6 +890,7 @@
     pointer-events: none; /* não bloqueia o scroll */
     overflow: visible;
     isolation: auto;
+    background-color: #1a1a1a;
   }
 
   .hero-content {
@@ -1028,20 +1029,21 @@
   .universo-sticky {
     position: sticky;
     top: 0;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f8f2df;
     z-index: 1;
-    overflow-y: auto; /* permite scroll interno se o conteúdo for maior */
+    overflow-y: visible;
     padding: 0 2rem;
   }
 
   .universo-box {
     width: 100%;
     max-width: 1200px;
-    padding: 2rem 2rem 1rem;
+    padding: 2rem 2rem 3rem;
     will-change: opacity, transform;
     text-align: center;
   }
