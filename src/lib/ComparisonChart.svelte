@@ -392,7 +392,7 @@
                 x={axis.x} y={axis.y}
                 text-anchor="middle"
                 dominant-baseline="middle"
-                font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-family="''Poppins', 'Helvetica Neue', Arial, sans-serif"
                 font-size="15"
                 font-weight="600"
                 fill={axis.color}
@@ -422,18 +422,18 @@
             <line x1={xScale(0)} y1={DB_PY - 12} x2={xScale(0)} y2={DB_H - DB_PY + 10}
               stroke="rgba(168,158,150,0.35)" stroke-width="0.8" stroke-dasharray="4,3" />
             <text x={xScale(0)} y={DB_PY - 16} text-anchor="middle"
-              font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+              font-family="'Poppins', 'Helvetica Neue', Arial, sans-serif"
               font-size="6" fill="#c9bfb8">0</text>
             <text x={xScale(-1) + 2} y={DB_PY - 16}
-              font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+              font-family="'Poppins', 'Helvetica Neue', Arial, sans-serif"
               font-size="6" fill="#c9bfb8">–1</text>
             <text x={xScale(1) - 2} y={DB_PY - 16} text-anchor="end"
-              font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+              font-family="'Poppins', 'Helvetica Neue', Arial, sans-serif"
               font-size="6" fill="#c9bfb8">+1</text>
 
             {#each dumbellNodes as dim}
               <text x={DB_PX} y={dim.y - 16} text-anchor="start"
-                font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-family="'Poppins', 'Helvetica Neue', Arial, sans-serif"
                 font-size="8"
                 font-weight="600"
                 fill="#555"
@@ -456,7 +456,7 @@
                   <text x={pt.x} y={pt.y + 1}
                     text-anchor="middle"
                     dominant-baseline="middle"
-                    font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+                    font-family="'Poppins', 'Helvetica Neue', Arial, sans-serif"
                     font-size="7"
                     font-weight="700"
                     fill="white"
@@ -540,7 +540,7 @@
   }
 
   .comp-title {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: clamp(1.3rem, 2.5vw, 2rem);
     font-weight: 750;
     fill: #1a1a1a;
@@ -550,7 +550,7 @@
   }
 
   .comp-subtitle {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     font-size: clamp(1rem, 2vw, 1.3rem);
     font-weight: 400;
     line-height: 1.4;
@@ -587,7 +587,7 @@
   }
 
   .suggestions-label {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
@@ -605,7 +605,7 @@
   }
 
   .suggestion-btn {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     font-size: 10.5px;
     font-weight: 500;
     line-height: 1.25;
@@ -660,7 +660,7 @@
   }
 
   .slot-number {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     width: 20px; height: 20px;
     border-radius: 50%;
     color: white;
@@ -683,7 +683,7 @@
 
   .type-select,
   .value-select {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     font-size: 12px;
     color: #1a1a1a;
     background: rgba(248, 242, 223, 0.9);
@@ -704,7 +704,7 @@
   }
 
   .add-slot-btn {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: white;
@@ -732,12 +732,12 @@
 
 
   .slot-type-badge {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: 10px; color: #a89e96; font-weight: 500;
   }
 
   .slot-label {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: 13px; font-weight: 700; color: #1a1a1a;
     line-height: 1.3;
     overflow: hidden;
@@ -748,7 +748,7 @@
   }
 
   .slot-count {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: 10px; color: #a89e96;
   }
 
@@ -787,7 +787,7 @@
   }
 
   .chart-block-title {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
     font-size: 1rem; font-weight: 700;
     color: #1a1a1a;
     margin: 0 0 0.2rem;
@@ -795,7 +795,7 @@
   }
 
   .chart-block-desc {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     font-size: 12px; color: #a89e96;
     margin: 0 0 0.75rem; line-height: 1.4;
   }
@@ -834,7 +834,7 @@
   }
 
   .legend-text {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     font-size: 10px; 
     font-weight: 600; 
     color: #6b6259;
@@ -853,7 +853,7 @@
   .float-tooltip {
     position: fixed;
     background: #1a1a1a; color: white;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
     font-size: 12px; font-weight: 600;
     padding: 5px 10px; border-radius: 6px;
     pointer-events: none; z-index: 9999;

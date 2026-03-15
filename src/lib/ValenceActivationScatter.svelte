@@ -897,20 +897,31 @@
      <!-- ── EMOCIONES ── -->
     <div class="tooltip-section">
       <span class="section-label">Emociones</span>
-      <ul>
+      <div class="emotion-bars">
         {#each emotions as e}
-          <li>{e.label}: {tooltip.data[`emocion_${e.label.toLowerCase()}`]}</li>
+          {@const val = parseFloat(tooltip.data[`emocion_${e.label.toLowerCase()}`]) || 0}
+          <div class="emotion-bar-row">
+            <span class="emotion-bar-label">{e.label}</span>
+            <div class="emotion-bar-track">
+              <div
+                class="emotion-bar-fill"
+                style="width: {val * 100}%; background: {e.color};"
+              ></div>
+            </div>
+            <span class="emotion-bar-value">{val.toFixed(2)}</span>
+          </div>
         {/each}
-      </ul>
+      </div>
     </div>
 
+
     <!-- ── TEMAS ── -->
-    {#if tooltip.data.type !== 'artista'}
+    {#if tooltip.data.type === 'cancion'}
       <div class="tooltip-section">
         <span class="section-label">Temas</span>
         <div class="tags">
-          {#if tooltip.data.themes}
-            {#each tooltip.data.themes.split(",") as t}
+           {#if tooltip.data.temas_macro}
+            {#each tooltip.data.temas_macro.split(",") as t}
               <span class="tag">{t.trim()}</span>
             {/each}
           {:else}
@@ -960,7 +971,7 @@
 }
 
 .title-text {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: clamp(1.3rem, 2.5vw, 2rem);
   font-weight: 750;
   fill: #1a1a1a;
@@ -969,7 +980,7 @@
 }
 
 .subtitle-text {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: clamp(1rem, 2vw, 1.3rem);
   font-weight: 400;
   line-height: 1.4;
@@ -979,7 +990,7 @@
 /* ── BOTÃO FILTROS ── */
 .filter-btn {
   position: relative;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: #6b6259;
@@ -1028,7 +1039,7 @@
 }
 
 .filter-label {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1038,7 +1049,7 @@
 
 .filter-input,
 .filter-select {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 13px;
   color: #1a1a1a;
   background: rgba(248, 242, 223, 0.9);
@@ -1089,7 +1100,7 @@
 }
 
 .emotion-pill {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 12px;
   font-weight: 600;
   padding: 4px 12px;
@@ -1108,7 +1119,7 @@
 
 /* Limpar filtros */
 .clear-btn {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 12px;
   font-weight: 600;
   color: #db2d61;
@@ -1145,7 +1156,7 @@
 }
 
 .selected-tag {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 11px;
   font-weight: 600;
   display: flex;
@@ -1200,21 +1211,21 @@
 
 /* ── TIPOGRAFIA SVG ── */
 :global(.axis-label) {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: 12px;
   font-weight: 500;
   fill: #a89e96;
 }
 
 :global(.axis-title) {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: 12px;
   font-weight: 600;
   fill: #6b6259;
 }
 
 :global(.quadrant-sub) {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: 10px;
   font-weight: 500;
   fill: #65605C;
@@ -1223,7 +1234,7 @@
 }
 
 :global(.quadrant-main) {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   fill: #65605C;
@@ -1242,7 +1253,7 @@
 }
 
 .mode-btn {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: #a89e96;
@@ -1299,7 +1310,7 @@
   border-radius: 12px;
   padding: 14px 16px;
   box-shadow: 0 8px 30px rgba(42, 31, 26, 0.14);
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 13px;
   line-height: 1.5;
   z-index: 9999;
@@ -1334,12 +1345,46 @@
   margin-bottom: 4px;
 }
 
-.tooltip-section ul {
-  padding-left: 14px;
-  margin: 4px 0 0;
-  color: #555;
-  font-size: 12px;
+.emotion-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
 }
+
+.emotion-bar-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 32px;
+  align-items: center;
+  gap: 6px;
+}
+
+.emotion-bar-label {
+  font-size: 11px;
+  color: #6b6259;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.emotion-bar-track {
+  height: 6px;
+  background: rgba(190, 180, 170, 0.25);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.emotion-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.emotion-bar-value {
+  font-size: 10px;
+  color: #a89e96;
+  text-align: right;
+}
+
 
 .tooltip.pinned {
   border-color: rgba(190, 180, 170, 0.8);

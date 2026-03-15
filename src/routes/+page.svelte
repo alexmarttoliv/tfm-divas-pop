@@ -109,7 +109,8 @@
         emocion_ira: +d.emocion_ira,
         emocion_miedo: +d.emocion_miedo,
         emocion_sorpresa: +d.emocion_sorpresa,
-        emocion_asco: +d.emocion_asco
+        emocion_asco: +d.emocion_asco,
+        temas_macro: d.temas_macro
       })
     );
 
@@ -416,7 +417,9 @@
 
     <div class="intro-box" style="opacity: {Math.min(1, Math.max(0, (scrollY - 400) / 200))}; transform: translateY({Math.max(0, 30 - (scrollY - 400) / 10)}px);">
       
-      <h2 class="intro-heading">El arte de ser diva</h2>
+      <h2 class="intro-heading">
+        El arte de ser <span class="diva-word">diva</span>
+      </h2>
 
       <p class="intro-text">
         La música pop funciona como el idioma universal de las masas y busca la inmediatez
@@ -682,7 +685,7 @@
     <div class="cierre-box">
 
       <h2 class="cierre-heading">
-        El pop de las divas se volvió más complejo porque <em>ellas</em> se volvieron más complejas.
+        El pop de las divas se volvió más complejo porque <em>ellas</em> se volvieron más complejas
       </h2>
       <p class="cierre-text">
         Las letras del pop femenino han experimentado una transformación 
@@ -890,6 +893,7 @@
     pointer-events: none; /* não bloqueia o scroll */
     overflow: visible;
     isolation: auto;
+    background-color: #1a1a1a;
   }
 
   .hero-content {
@@ -942,7 +946,7 @@
     font-size: clamp(1.1rem, 2.2vw, 1.5rem);
     font-weight: 400;
     line-height: 1.4;
-    color: #555;
+    color: #999;
     margin-bottom: 1rem;
     animation: fade-in 800ms ease-out both;
   }
@@ -1028,20 +1032,21 @@
   .universo-sticky {
     position: sticky;
     top: 0;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f8f2df;
     z-index: 1;
-    overflow-y: auto; /* permite scroll interno se o conteúdo for maior */
+    overflow-y: visible;
     padding: 0 2rem;
   }
 
   .universo-box {
     width: 100%;
     max-width: 1200px;
-    padding: 2rem 2rem 1rem;
+    padding: 2rem 2rem 3rem;
     will-change: opacity, transform;
     text-align: center;
   }
