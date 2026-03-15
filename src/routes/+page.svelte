@@ -109,7 +109,8 @@
         emocion_ira: +d.emocion_ira,
         emocion_miedo: +d.emocion_miedo,
         emocion_sorpresa: +d.emocion_sorpresa,
-        emocion_asco: +d.emocion_asco
+        emocion_asco: +d.emocion_asco,
+        temas_macro: d.temas_macro
       })
     );
 
@@ -416,7 +417,9 @@
 
     <div class="intro-box" style="opacity: {Math.min(1, Math.max(0, (scrollY - 400) / 200))}; transform: translateY({Math.max(0, 30 - (scrollY - 400) / 10)}px);">
       
-      <h2 class="intro-heading">El arte de ser diva</h2>
+      <h2 class="intro-heading">
+        El arte de ser <span class="diva-word">diva</span>
+      </h2>
 
       <p class="intro-text">
         La música pop funciona como el idioma universal de las masas y busca la inmediatez
@@ -682,7 +685,7 @@
     <div class="cierre-box">
 
       <h2 class="cierre-heading">
-        El pop de las divas se volvió más complejo porque <em>ellas</em> se volvieron más complejas.
+        El pop de las divas se volvió más complejo porque <em>ellas</em> se volvieron más complejas
       </h2>
       <p class="cierre-text">
         Las letras del pop femenino han experimentado una transformación 
@@ -943,7 +946,7 @@
     font-size: clamp(1.1rem, 2.2vw, 1.5rem);
     font-weight: 400;
     line-height: 1.4;
-    color: #555;
+    color: #999;
     margin-bottom: 1rem;
     animation: fade-in 800ms ease-out both;
   }

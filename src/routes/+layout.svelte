@@ -15,6 +15,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>¿Cómo se volvió emocionalmente más complejo el pop de las divas?</title>
 </svelte:head>
 
 {@render children()}

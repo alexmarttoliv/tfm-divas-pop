@@ -47,6 +47,11 @@
     }
   ];
 
+
+  $: highlight2000 = activeIndex === 0;
+  $: highlight2020 = activeIndex === 1;
+
+
   /* ── SCROLLAMA ── */
   const updateScroller = async () => {
     if (!data || data.length === 0) return;
@@ -225,12 +230,33 @@
             {@const cx  = x(d.decade)}
             {@const cy  = y(d[s.key])}
             {@const val = d[s.key] >= 0 ? "+" + d[s.key].toFixed(2) : d[s.key].toFixed(2)}
+            {@const isPeak = (d.decade === 2000 && highlight2000) || (d.decade === 2020 && highlight2020)}
+
+            <!-- Anel pulsante — só aparece no pico dos 2000s -->
+            {#if isPeak}
+              <circle
+                class="pulse-ring"
+                cx={cx} cy={cy} r="9"
+                fill="none"
+                stroke={s.color}
+                stroke-width="2.5"
+              />
+            {/if}
+
+            <!-- Dot principal -->
             <circle
-              {cx} {cy} r="6"
+              {cx} {cy}
+              r={isPeak ? 9 : 6}
               fill={s.color} stroke="white" stroke-width="2.5"
               opacity={linesVisible ? 1 : 0}
-              style="transition: opacity 0.4s ease {1.8 + si * 0.25 + 0.3}s;"
+              style="
+                transition:
+                  opacity 0.4s ease {1.8 + si * 0.25 + 0.3}s,
+                  r 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+              "
             />
+
+            <!-- Label do valor -->
             <text
               x={cx} y={cy + s.labelOffset}
               text-anchor="middle"
@@ -401,5 +427,16 @@
     .step {
       min-height: 50vh;
     }
+  }
+
+  .pulse-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pulse-ring 1.6s ease-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(1);   opacity: 0.7; }
+    100% { transform: scale(2.8); opacity: 0; }
   }
 </style>
