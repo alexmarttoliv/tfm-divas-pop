@@ -685,7 +685,7 @@
     <div class="cierre-box">
 
       <h2 class="cierre-heading">
-        El pop de las divas se volvió más complejo porque <em>ellas</em> se volvieron más complejas
+        El pop de las divas se volvió más complejo porque <span class="diva-word">ellas</span> se volvieron más complejas
       </h2>
       <p class="cierre-text">
         Las letras del pop femenino han experimentado una transformación 
@@ -719,7 +719,7 @@
             {#each [
               { num: '01', title: 'Selección de artistas', text: 'Se identificaron 31 divas del pop con trayectorias relevantes desde los años 70 hasta hoy, considerando impacto cultural, ventas, presencia en charts y reconocimiento crítico.' },
               { num: '02', title: 'Recopilación de discografía', text: 'Los datos de álbumes y canciones fueron obtenidos a través de la API de Spotify, incluyendo metadatos de fecha de lanzamiento y características de audio.' },
-              { num: '03', title: 'Extracción de letras', text: 'Las letras de las 3.074 canciones fueron recopiladas mediante Genius API, filtrando canciones sin letra disponible.' },
+              { num: '03', title: 'Extracción de letras', text: 'Las letras de las 3.089 canciones fueron recopiladas mediante Genius API, filtrando canciones sin letra disponible.' },
               { num: '04', title: 'Análisis emocional con IA', text: 'Cada letra fue analizada con Gemini 2.5 Pro, aplicando el marco de Ekman (1992) y el Modelo Circumplejo de Russell (1980), obteniendo valores de 0 a 1 para cada emoción, y -1 a 1 para la valencia y activación.' },
               { num: '05', title: 'Visualización', text: 'Los datos fueron procesados en Python y visualizados con D3.js y Svelte, priorizando una narrativa scrollytelling interactiva.' },
               { num: '06', title: 'Limitaciones', text: 'Canciones con menos 60s de duración fueron excluidas. La IA puede no capturar todos los matices culturales.' },
@@ -764,7 +764,13 @@
           <a href="https://weareshifta.com/formaciones/master-online-en-visualizacion-de-datos-y-diseno-de-la-informacion/" target="_blank" rel="noopener noreferrer">SHIFTA</a> · 2026
         </p>
         <p class="cierre-creditos-text">
-          Por <a href="https://www.linkedin.com/in/alexmartt/" target="_blank" rel="noopener noreferrer">Alexandre Oliveira</a>
+          <a href="https://github.com/alexmarttoliv/tfm-divas-pop" target="_blank" rel="noopener noreferrer" class="github-link">
+            <svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:middle; margin-right:4px;">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            Proyecto en GitHub
+          </a>
+          · Por <a href="https://www.linkedin.com/in/alexmartt" target="_blank" rel="noopener noreferrer">Alexandre Oliveira</a>
         </p>
       </div>
 
@@ -1703,11 +1709,6 @@
     letter-spacing: -1px;
     color: #1a1a1a;
     margin-bottom: 1.8rem;
-  }
-
-  .cierre-heading em {
-    font-style: italic;
-    color: #c9587a;
   }
 
   .cierre-text {
