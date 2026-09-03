@@ -9,15 +9,26 @@
 
   let container;
   let width = 800;
-  const height = 450;
 
   let scroller;
   let activeIndex = -1;
   let photosVisible = false;
 
+  // As margens eram fixas em 100px de cada lado. Num celular de ~390px isso deixava
+  // apenas ~190px de área útil — daí o gráfico aparecer espremido. Agora elas
+  // encolhem junto com o contêiner, preservando a proporção da área de plotagem.
+  $: isNarrow = width < 700;
+  $: sideMargin = Math.max(16, Math.min(100, width * 0.08));
+  $: margin = {
+    top: isNarrow ? 40 : 80,
+    right: sideMargin,
+    bottom: isNarrow ? 44 : 60,
+    left: sideMargin
+  };
 
-  const margin = { top: 80, right: 100, bottom: 60, left: 100 };
-  const photosAreaHeight = 250;
+  // Altura também acompanha a largura, senão em tela estreita o gráfico fica
+  // alto e fino demais para as faixas serem legíveis.
+  $: height = isNarrow ? Math.max(270, width * 0.78) : 450;
 
   // Textos para cada área destacada
   const scrollSteps = [
@@ -242,36 +253,73 @@
     if (ribbonHeight < 14) return null;
     
     const centerY = (y(firstPoint.y0) + y(firstPoint.y1)) / 2;
-    
+
+    // O streamgraph usa offset "wiggle", então a faixa do topo pode subir acima
+    // da área desenhável — o rótulo saía do SVG e simplesmente não aparecia
+    // (era o caso de "Tristeza" no mobile, onde a margem superior é menor).
+    const labelSize = isNarrow ? 10 : 13;
+    const minY = margin.top + labelSize;
+    const maxY = height - margin.bottom - labelSize / 2;
+
     return {
       x: x(firstPoint.index) + 12,
-      y: centerY 
+      y: Math.min(Math.max(centerY, minY), maxY)
     };
   };
 
   /* ======================
      POSIÇÃO DAS FOTOS DAS ARTISTAS
   ====================== */
+  // Espaço horizontal entre duas décadas — é o limite real que um cluster de fotos
+  // pode ocupar sem invadir o cluster vizinho.
+  $: decadeSpacing = indexedData.length > 1
+    ? (width - margin.left - margin.right) / (indexedData.length - 1)
+    : width;
+
+  $: photoGap = isNarrow ? 3 : 10;
+  $: photosPerRow = isNarrow ? 2 : 3;
+
+  // As fotos voltam também no mobile. O tamanho é derivado do espaçamento entre
+  // décadas (ver photoSize), então os clusters não se sobrepõem; a borda é mais
+  // fina em tela estreita para os círculos não parecerem fundidos.
+  $: showPhotos = true;
+
+  $: photoSize = isNarrow
+    ? Math.max(20, Math.min(34, (decadeSpacing * 0.82 - photoGap * (photosPerRow - 1)) / photosPerRow))
+    : 55;
+
   function getArtistPhotoXPosition(decadeIndex, artistIndex, totalArtists) {
     const xBase = x(decadeIndex);
-    const photoSize = 55;
-    const gap = 10;
-    
-    const maxPerRow = 3;
+    const maxPerRow = photosPerRow;
     const row = Math.floor(artistIndex / maxPerRow);
     const col = artistIndex % maxPerRow;
-    
-    const totalWidth = Math.min(totalArtists, maxPerRow) * (photoSize + gap) - gap;
-    let startX = xBase - totalWidth / 2;
 
-    const maxStartX = width - totalWidth - photoSize / 2;
+    const clusterWidth = Math.min(totalArtists, maxPerRow) * (photoSize + photoGap) - photoGap;
+    let startX = xBase - clusterWidth / 2;
+
+    // Trava nas duas bordas. O piso é 0 (e não photoSize/4) porque qualquer
+    // empurrão para a direita aqui se propaga como sobreposição no cluster seguinte.
+    const maxStartX = width - clusterWidth - photoSize / 4;
     if (startX > maxStartX) startX = maxStartX;
-    
+    if (startX < 0) startX = 0;
+
     return {
-      x: startX + col * (photoSize + gap),
-      y: 10 + row * (photoSize + gap + 5)
+      x: startX + col * (photoSize + photoGap),
+      y: 10 + row * (photoSize + photoGap + 5),
+      size: photoSize
     };
   };
+
+  // A área de fotos precisa comportar a década com mais artistas (2000s, com 8).
+  $: maxArtistRows = Math.max(
+    1,
+    ...Object.values(decadeArtists).map(a => Math.ceil(a.length / photosPerRow))
+  );
+  $: photosAreaHeight = !showPhotos
+    ? 0
+    : isNarrow
+      ? 10 + maxArtistRows * (photoSize + photoGap + 5)
+      : 250;
 
 
   // Calcular delay global para cada foto
@@ -293,6 +341,7 @@
     <div bind:this={container} class="chart-container">
       
       <!-- ÁREA DE FOTOS -->
+      {#if showPhotos}
       <div class="photos-section" style="height: {photosAreaHeight}px;">
         <div class="photos-inner" style="width: {totalWidth}px;">
           {#each indexedData as d, decadeIdx}
@@ -307,6 +356,8 @@
                   style="
                     left: {pos.x}px; 
                     top: {pos.y}px;
+                    width: {pos.size}px;
+                    height: {pos.size}px;
                     transition-delay: {delay}ms;
                   "
                 >
@@ -317,6 +368,7 @@
           {/each}
         </div>
       </div>
+      {/if}
 
       <!-- SVG DO GRÁFICO -->
       <div class="chart-section">
@@ -348,11 +400,11 @@
                 y={pos.y}
                 text-anchor="start"
                 dominant-baseline="middle"
-                font-size="13"
+                font-size={isNarrow ? 10 : 13}
                 font-weight="900"
                 fill="white"
                 stroke="#00000066"
-                stroke-width="4"
+                stroke-width={isNarrow ? 3 : 4}
                 paint-order="stroke"
                 letter-spacing="1"
                 opacity={highlightedKey && serie.key !== highlightedKey ? 0.3 : 1}
@@ -365,13 +417,14 @@
           {#each indexedData as d}
             <text
               x={x(d.index)}
-              y={height - margin.bottom + 28}
+              y={height - margin.bottom + (isNarrow ? 22 : 28)}
               text-anchor="middle"
-              font-size="16"
+              font-size={isNarrow ? 11 : 16}
               font-weight="500"
               fill="#333"
             >
-              {d.decade}s
+              <!-- Em tela estreita "1970s" vira "'70" para os rótulos não colidirem -->
+              {isNarrow ? `'${String(d.decade).slice(2)}` : `${d.decade}s`}
             </text>
             
             <!-- gridline das décadas -->
@@ -490,8 +543,8 @@
   }
 
   .artist-photo img {
-    width: 55px;
-    height: 55px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
@@ -641,19 +694,30 @@
       top: 10px;
     }
 
-    .photos-section {
-      height: 160px !important;
-    }
-
+    /* A altura da faixa e o tamanho das fotos agora são calculados a partir do
+       espaçamento entre décadas (photoSize/photosAreaHeight no script), então os
+       valores fixos que existiam aqui foram removidos — eles brigavam com o cálculo
+       e faziam os clusters de décadas vizinhas se sobreporem. */
     .artist-photo img {
-      width: 45px;
-      height: 45px;
-      border-width: 2px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
     }
 
     .annotation-strip {
-      padding: 1.4rem 1.6rem;
-      min-height: 100px;
+      padding: 1rem 1.1rem;
+      min-height: 0;
+      gap: 0.7rem;
+    }
+
+    /* O gráfico + faixa de fotos já consomem quase toda a tela; com a tipografia
+       de desktop o texto da anotação ficava cortado embaixo. */
+    .annotation-text strong {
+      font-size: 1.02rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .annotation-text span {
+      font-size: 0.87rem;
+      line-height: 1.5;
     }
   }
 </style>

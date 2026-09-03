@@ -25,7 +25,16 @@
   let direction = "down";
 
 
-  const margin = { top: 40, right: 85, bottom: 60, left: 60 };
+  $: isNarrow = width < 700;
+  // O rótulo de cada emoção é desenhado À DIREITA do último ponto, então a margem
+  // direita precisa comportar a palavra mais longa ("Sorpresa"). Reduzi-la demais
+  // fazia os rótulos vazarem para fora da tela.
+  $: margin = {
+    top: 40,
+    right: isNarrow ? 74 : 85,
+    bottom: isNarrow ? 46 : 60,
+    left: isNarrow ? 30 : 60
+  };
 
 
 
@@ -186,7 +195,7 @@
       </p>
       
       <!-- SVG GRÁFICO -->
-      <svg {width} {height}>
+      <svg {width} {height} style="max-width: 100%; display: block;">
 
         <!-- eixo Y -->
         <line
@@ -234,9 +243,9 @@
                 <text
                   in:fade={{ duration: 1300 }}
                   out:fade={{ duration: 250 }}
-                  x={decadeCenter(currentDecade.decade) + xBand.bandwidth() / 2 + 15}
+                  x={decadeCenter(currentDecade.decade) + xBand.bandwidth() / 2 + (isNarrow ? 8 : 15)}
                   y={y(currentDecade[emotion.key]) + 4}
-                  font-size="16"
+                  font-size={isNarrow ? 12 : 16}
                   font-weight="600"
                   fill={emotion.color}
                   text-anchor="start"
@@ -270,12 +279,13 @@
             <!-- label -->
             <text
               x={xBand.bandwidth() / 2}
-              y={height - margin.bottom + 24}
+              y={height - margin.bottom + (isNarrow ? 20 : 24)}
               text-anchor="middle"
-              font-size="16"
+              font-size={isNarrow ? 11 : 16}
               fill="#333"
             >
-              {block.decade}s
+              <!-- Abreviado no mobile, igual ao ribbon: "1970s" não cabe seis vezes -->
+              {isNarrow ? `'${String(block.decade).slice(2)}` : `${block.decade}s`}
             </text>
           </g>
         {/each}
@@ -354,6 +364,7 @@
 
 
   .scrolly {
+    min-width: 0;
     display: grid;
     grid-template-columns: 1fr 420px;
     gap: 40px;
@@ -361,7 +372,108 @@
     margin: 0 auto;
   }
 
+  /* Sem este breakpoint a coluna fixa de 420px continuava reservada no celular,
+     deixando o gráfico com uma sobra ridícula de largura. */
+
+  /* Tablet (iPad retrato ~1024px): a coluna fixa de 420px mais 120px de padding
+     deixavam menos de 450px para o gráfico. Encolhendo a coluna de texto e as
+     margens laterais, o gráfico ganha ~200px de largura. */
+  @media (min-width: 861px) and (max-width: 1100px) {
+    .scrolly {
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      padding: 0 24px;
+    }
+
+    .step {
+      font-size: 15px;
+    }
+
+    .step-body p {
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .artist-row img {
+      width: 54px;
+      height: 54px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .scrolly {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0 16px;
+    }
+
+    /* Empilhado, o gráfico fica preso no topo e o texto do passo passa POR CIMA
+       dele como um cartão flutuante. Antes o gráfico era opaco e com z-index maior,
+       então engolia o texto e as fotos das artistas. */
+    .graphic {
+      position: sticky;
+      top: 0;
+      background: #f8f2df;
+      padding: 8px 0 0;
+      z-index: 1;
+    }
+
+    .steps {
+      padding-bottom: 40vh;
+      position: relative;
+      z-index: 2;
+      /* puxa o primeiro cartão para cima, sobrepondo o gráfico */
+      margin-top: -22vh;
+      pointer-events: none;
+    }
+
+    .step {
+      min-height: 62vh;
+      font-size: 15px;
+    }
+
+    .step-content {
+      background: rgba(248, 242, 223, 0.94);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 14px;
+      border: 1px solid rgba(190, 180, 170, 0.35);
+      box-shadow: 0 6px 24px rgba(42, 31, 26, 0.10);
+      padding: 14px 16px;
+      pointer-events: auto;
+    }
+
+    .step-content h3 {
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+
+    .step-body {
+      padding: 0;
+      gap: 10px;
+    }
+
+    .step-body p {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* Fotos menores para o cartão não ocupar meia tela */
+    .artist-row img {
+      width: 42px;
+      height: 42px;
+    }
+
+    .artist-row {
+      gap: 6px;
+    }
+  }
+
   .graphic {
+    /* Sem min-width:0 o item do grid não pode encolher abaixo do conteúdo (o SVG
+       de 600px), então o contêiner nunca diminui e clientWidth lê 600 para sempre. */
+    min-width: 0;
     position: sticky;
     top: 20px;
     align-self: start;

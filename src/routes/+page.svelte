@@ -22,18 +22,39 @@
   let scatterData = [];
   let albumsData = [];
   let selectedDiva = null;
-  let lastSelectedDiva = null; // Para guardar qual era a diva antes de fechar
+  let lastSelectedDiva = null; // guardar qual era a diva antes de fechar
   let lastScrollPosition = 0;
   let metodoAberto = false;
 
   let tooltipVisible = false;
   let tooltipX = 0;
   let tooltipY = 0;
+  let tooltipPlacement = 'left'; 
 
-  function showPromptTooltip(e) {
+  // Funciona tanto em tap (mobile) quanto em click (desktop)
+  // confiável em telas touch, então o gatilho agora alterna (toggle) a exibição.
+  function togglePromptTooltip(e) {
+    if (tooltipVisible) {
+      tooltipVisible = false;
+      return;
+    }
     const rect = e.currentTarget.getBoundingClientRect();
-    tooltipX = rect.left - 12;
-    tooltipY = rect.top + rect.height / 2;
+    const tooltipWidth = Math.min(520, window.innerWidth - 32);
+
+    if (window.innerWidth < 640) {
+      // Telas estreitas: centraliza abaixo do gatilho em vez de tentar abrir ao lado
+      tooltipPlacement = 'below';
+      tooltipX = window.innerWidth / 2;
+      tooltipY = rect.bottom + 10;
+    } else if (rect.left - 12 - tooltipWidth > 0) {
+      tooltipPlacement = 'left';
+      tooltipX = rect.left - 12;
+      tooltipY = rect.top + rect.height / 2;
+    } else {
+      tooltipPlacement = 'right';
+      tooltipX = rect.right + 12;
+      tooltipY = rect.top + rect.height / 2;
+    }
     tooltipVisible = true;
   };
 
@@ -121,7 +142,7 @@
       album_image_url: d.album_image_url
     }));
 
-      // Calcula as colunas do grid
+    // Calcula as colunas do grid
     gridColumns = getGridColumns();
     
     // Recalcula quando a janela é redimensionada
@@ -357,20 +378,34 @@
   };
 
 
+  // Abaixo desta largura o layout deixa de ser "pinned" (sticky de altura fixa)
+  // e passa a fluir normalmente — ver media query em @media (max-width: 899px).
+  $: isMobile = windowWidth < 900;
+
   // função reativa para atualizar o scroller da seção de universo analisado
-  $: universoOpacity = Math.min(1, Math.max(0, (scrollY - 1400) / 250));
-  $: universoTranslate = Math.max(0, 30 - (scrollY - 1400) / 10);
+  // Os limiares (1400px, 400px etc.) foram calibrados para a altura do texto no desktop.
+  // No mobile o mesmo texto reflui muito mais alto, então esses valores disparam no
+  // ponto errado e deixariam blocos invisíveis — por isso o reveal é neutralizado.
+  $: universoOpacity = isMobile ? 1 : Math.min(1, Math.max(0, (scrollY - 1400) / 250));
+  $: universoTranslate = isMobile ? 0 : Math.max(0, 30 - (scrollY - 1400) / 10);
+
+  $: introOpacity = isMobile ? 1 : Math.min(1, Math.max(0, (scrollY - 400) / 200));
+  $: introTranslate = isMobile ? 0 : Math.max(0, 30 - (scrollY - 400) / 10);
+
+  $: heroOpacity = isMobile ? 1 : Math.max(0, 1 - scrollY / 400);
 
 </script>
 
 
 <svelte:window bind:scrollY bind:innerWidth={windowWidth} />
 
-  {#if windowWidth < 1280 && showWarning}
+  <!-- Aviso só em telas de celular (iPhone e similares). Tablets, iPad e desktop
+       já têm layout próprio, então não faz mais sentido bloqueá-los. -->
+  {#if windowWidth < 640 && showWarning}
     <div class="mobile-warning">
       <span class="mobile-icon">🖥️</span>
-      <p>Este sitio está optimizado para pantallas más grandes.</p>
-      <p>Para una mejor experiencia, ábrelo en un ordenador o tablet.</p>
+      <p>Los gráficos de este sitio se disfrutan mejor en una pantalla más grande.</p>
+      <p>Puedes seguir aquí, o abrirlo en una tablet u ordenador para verlo con más detalle.</p>
       <button on:click={() => showWarning = false}>Continuar de todas formas</button>
     </div>
   {/if}
@@ -395,7 +430,7 @@
   </video>
 
 <!-- HERO: título com fade out no scroll -->
-<section class="hero" style="opacity: {Math.max(0, 1 - scrollY / 400)};">
+<section class="hero" style="opacity: {heroOpacity};">
 
   <div class="hero-content">
     <h1 class="hero-title">
@@ -415,7 +450,7 @@
 <section class="intro-scrolly">
   <div class="intro-sticky">
 
-    <div class="intro-box" style="opacity: {Math.min(1, Math.max(0, (scrollY - 400) / 200))}; transform: translateY({Math.max(0, 30 - (scrollY - 400) / 10)}px);">
+    <div class="intro-box" style="opacity: {introOpacity}; transform: translateY({introTranslate}px);">
       
       <h2 class="intro-heading">
         El arte de ser <span class="diva-word">diva</span>
@@ -487,7 +522,7 @@
           emocionales y temáticos de cada composición.
         </p>
 
-        <div class="divas-grid">
+        <div class="divas-grid" style="grid-template-columns: repeat({gridColumns}, 1fr);">
           {#each divas as diva, index}
             {#if selectedDiva && shouldShowAlbumsBefore(index)}
               <div class="albums-expanded" style="grid-column: 1 / -1;">
@@ -703,7 +738,7 @@
       <!-- Botão metodologia -->
       <button 
         class="metodologia-toggle" 
-        on:click={() => metodoAberto = !metodoAberto}
+        on:click={() => { metodoAberto = !metodoAberto; tooltipVisible = false; }}
         aria-expanded={metodoAberto}
       >
         <span>{metodoAberto ? '−' : '+'}</span>
@@ -713,7 +748,7 @@
       <!-- Overlay por cima -->
       {#if metodoAberto}
         <div class="metodologia-overlay" transition:fade={{ duration: 250 }}>
-          <button class="metodologia-close" on:click={() => metodoAberto = false}>✕</button>
+          <button class="metodologia-close" on:click={() => { metodoAberto = false; tooltipVisible = false; }}>✕</button>
           <p class="cierre-label">Metodología</p>
           <div class="metodologia-grid">
             {#each [
@@ -730,11 +765,12 @@
                 {#if step.num === '04'}
                   <p>
                     Cada letra fue analizada con
-                    <strong
+                    <button
+                      type="button"
                       class="gemini-trigger"
-                      on:mouseenter={showPromptTooltip}
-                      on:mouseleave={hidePromptTooltip}
-                    >Gemini 2.5 Pro</strong>,
+                      on:click={togglePromptTooltip}
+                      aria-expanded={tooltipVisible}
+                    >Gemini 2.5 Pro</button>,
                     aplicando el marco de Ekman (1992) y el Modelo Circumplejo de Russell (1980).
                   </p>
                 {:else}
@@ -748,10 +784,11 @@
 
       {#if tooltipVisible}
         <div
-          class="prompt-tooltip"
+          class="prompt-tooltip placement-{tooltipPlacement}"
           style="left: {tooltipX}px; top: {tooltipY}px;"
           transition:fade={{ duration: 150 }}
         >
+          <button class="prompt-tooltip-close" on:click={hidePromptTooltip} aria-label="Cerrar">✕</button>
           <span class="prompt-label">Prompt utilizado:</span>
           <pre class="prompt-code">{promptGemini}</pre>
         </div>
@@ -1085,8 +1122,9 @@
 
   .numbers-grid {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 4rem;
+    gap: 1.5rem 4rem;
     margin-bottom: 2.5rem;
   }
 
@@ -1852,27 +1890,37 @@
   }
 
   .gemini-trigger {
+    display: inline;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
     color: #c9587a;
     border-bottom: 1.5px dashed #c9587a;
-    cursor: help;
+    cursor: pointer;
     font-weight: 700;
   }
 
   .prompt-tooltip {
     position: fixed;
-    transform: translate(-100%, -50%);
-    width: 520px;
-    overflow-y: visible;
+    width: min(520px, calc(100vw - 32px));
+    max-height: min(420px, calc(100vh - 32px));
+    overflow-y: auto;
     background: #1a1a1a;
     color: #f0e8d4;
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
     z-index: 9999;
     box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-    pointer-events: none;
+    pointer-events: auto;
   }
 
-  .prompt-tooltip::after {
+  .prompt-tooltip.placement-left { transform: translate(-100%, -50%); }
+  .prompt-tooltip.placement-right { transform: translate(0, -50%); }
+  .prompt-tooltip.placement-below { transform: translate(-50%, 0); }
+
+  .prompt-tooltip.placement-left::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -1880,6 +1928,44 @@
     transform: translateX(-50%);
     border: 7px solid transparent;
     border-left-color: #1a1a1a;
+  }
+
+  .prompt-tooltip.placement-right::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateX(50%);
+    border: 7px solid transparent;
+    border-right-color: #1a1a1a;
+  }
+
+  /* Sem seta no modo mobile (abaixo do gatilho) — a proximidade já deixa a relação clara */
+  .prompt-tooltip.placement-below::after {
+    content: none;
+  }
+
+  .prompt-tooltip-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(240, 232, 212, 0.12);
+    color: #f0e8d4;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.15s;
+  }
+
+  .prompt-tooltip-close:hover {
+    background: rgba(240, 232, 212, 0.25);
   }
 
   .prompt-label {
@@ -1910,5 +1996,139 @@
     margin: 0;
   }
 
+  /* ============================================
+     TELAS ESTREITAS — DESATIVA O MODO "PINNED"
+     ============================================
+     O layout desktop prende seções em contêineres sticky de altura fixa (100vh)
+     e centraliza o conteúdo dentro. Isso funciona no desktop porque o texto cabe
+     na viewport. No celular o mesmo texto reflui numa coluna estreita e fica
+     MUITO mais alto que 100vh — o excedente era cortado em cima e embaixo
+     (foi o que aconteceu na intro e no "Espectro Emocional").
+
+     A solução não é diminuir fonte até caber, e sim desligar o pinning:
+     abaixo de 900px as seções voltam a fluir normalmente, com altura automática.
+     Assim o conteúdo nunca pode ser cortado, seja qual for o tamanho da tela. */
+  /* ============================================
+     MODAL DA METODOLOGIA (até tablet)
+     ============================================
+     No desktop o painel é absoluto e "sangra" para os lados (left/right: -30%).
+     Em telas menores esse sangramento jogava as bordas para fora da viewport
+     (bem visível no iPad) e o painel ainda era cortado pelo contêiner pai.
+     Abaixo de 1024px ele vira um modal fixo, centralizado e com rolagem própria:
+     assim independe totalmente do tamanho do pai e da posição do scroll. */
+  @media (max-width: 1024px) {
+    .metodologia-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -50%);
+      width: min(600px, calc(100vw - 24px));
+      box-sizing: border-box;
+      max-height: 82vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      z-index: 1000;
+      padding: 2.5rem 1.25rem 1.5rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+    }
+
+    .metodologia-close {
+      position: sticky;
+      top: 0;
+      float: right;
+      margin: -1.5rem -0.25rem 0 0;
+      background: #f0e8d4;
+      z-index: 2;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .intro-scrolly,
+    .universo-scrolly,
+    .scrolly-container,
+    .cierre-scrolly {
+      height: auto;
+      min-height: 0;
+    }
+
+    .intro-sticky,
+    .universo-sticky,
+    .sticky-wrapper,
+    .cierre-sticky {
+      position: static;
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+      padding-top: 3.5rem;
+      padding-bottom: 3.5rem;
+    }
+
+    /* No desktop estas camadas são absolutas e empilhadas dentro do sticky.
+       Sem o sticky, precisam voltar ao fluxo normal ou colapsam para altura zero. */
+    .chart-layer,
+    .text-overlay {
+      position: relative;
+      height: auto;
+    }
+
+    .chart-layer {
+      display: none; /* camada decorativa vazia — não ocupa espaço no mobile */
+    }
+
+    .text-overlay {
+      background: transparent;
+      backdrop-filter: none;
+    }
+
+    .content-box,
+    .intro-box {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      max-width: 100%;
+    }
+
+    /* O hero continua ocupando a tela cheia, mas sem sumir no scroll */
+    .hero {
+      position: relative;
+      height: 100svh;
+    }
+
+    .intro-scroll-hint {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .metodologia-toggle {
+      font-size: 0.82rem;
+      padding: 0.65rem 1.1rem;
+      text-align: left;
+    }
+
+    .numbers-grid {
+      gap: 1rem 2.2rem;
+    }
+
+    .count {
+      font-size: 2.3rem;
+    }
+
+    .emotions-legend {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .universo-box {
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    .cierre-box {
+      padding: 2rem 1.25rem;
+    }
+
+    .hero-content {
+      padding: 0 1.25rem;
+    }
+  }
 
 </style>

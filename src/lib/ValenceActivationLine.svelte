@@ -20,7 +20,15 @@
   let titleEl;
   let direction = "down";
 
-  const margin = { top: 40, right: 120, bottom: 52, left: 48 };
+  $: isNarrow = width < 700;
+  // Os rótulos das séries ("Valencia"/"Activación") são desenhados à direita do
+  // último ponto, então a margem direita precisa comportá-los.
+  $: margin = {
+    top: 40,
+    right: isNarrow ? 76 : 120,
+    bottom: isNarrow ? 44 : 52,
+    left: isNarrow ? 30 : 48
+  };
 
   const seriesConfig = [
     { key: "valence",    label: "Valencia",   color: "#4b62d2", labelOffset: +22 },
@@ -174,7 +182,7 @@
         Valencia y activación como brújula del pop femenino desde los 70 hasta hoy
       </p>
 
-      <svg {width} {height}>
+      <svg {width} {height} style="max-width: 100%; display: block;">
 
         <!-- Gridlines verticais nas décadas -->
         {#each data as d}
@@ -199,9 +207,9 @@
         <!-- Eixo X -->
         {#each data as d}
           <text
-            x={x(d.decade)} y={height - margin.bottom + 22}
-            text-anchor="middle" font-size="16" font-weight="500" fill="#333"
-          >{d.decade}s</text>
+            x={x(d.decade)} y={height - margin.bottom + (isNarrow ? 20 : 22)}
+            text-anchor="middle" font-size={isNarrow ? 11 : 16} font-weight="500" fill="#333"
+          >{isNarrow ? `'${String(d.decade).slice(2)}` : `${d.decade}s`}</text>
         {/each}
 
         <!-- ── LINHAS: animação draw ao entrar na viewport ── -->
@@ -272,8 +280,8 @@
           {#if data.length}
             {@const last = data[data.length - 1]}
             <text
-              x={x(last.decade) + 14} y={y(last[s.key]) + 5}
-              font-size="13" font-weight="700" fill={s.color}
+              x={x(last.decade) + (isNarrow ? 8 : 14)} y={y(last[s.key]) + 5}
+              font-size={isNarrow ? 11 : 13} font-weight="700" fill={s.color}
               opacity={linesVisible ? 1 : 0}
               style="transition: opacity 0.4s ease {2.1 + si * 0.25}s;"
             >{s.label}</text>
@@ -309,6 +317,7 @@
 <style>
   /* ── LAYOUT IDÊNTICO AO EmotionLineChart ── */
   .scrolly {
+    min-width: 0;
     display: grid;
     grid-template-columns: 1fr 420px;
     gap: 40px;
@@ -317,6 +326,9 @@
   }
 
   .graphic {
+    /* Sem min-width:0 o item do grid não pode encolher abaixo do conteúdo (o SVG
+       de 600px), então o contêiner nunca diminui e clientWidth lê 600 para sempre. */
+    min-width: 0;
     position: sticky;
     top: 20px;
     align-self: start;
@@ -413,19 +425,76 @@
   }
 
   /* ── RESPONSIVO ── */
-  @media (max-width: 860px) {
+
+  /* Tablet (iPad retrato ~1024px): a coluna fixa de 420px mais 120px de padding
+     deixavam menos de 450px para o gráfico. Encolhendo a coluna de texto e as
+     margens laterais, o gráfico ganha ~200px de largura. */
+  @media (min-width: 861px) and (max-width: 1100px) {
     .scrolly {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
       padding: 0 24px;
     }
 
+    .step {
+      font-size: 15px;
+    }
+
+    .step-body p {
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .scrolly {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0 16px;
+    }
+
+    /* Mesmo padrão do gráfico "La curva de las emociones": o gráfico fica preso
+       no topo e as descrições passam por cima como cartões flutuantes. Antes o
+       gráfico era destravado (position: relative), então o texto caía embaixo. */
     .graphic {
-      position: relative;
+      position: sticky;
       top: 0;
+      background: #f8f2df;
+      padding: 8px 0 0;
+      z-index: 1;
+    }
+
+    .steps {
+      position: relative;
+      z-index: 2;
+      margin-top: -22vh;
+      padding-bottom: 40vh;
+      pointer-events: none;
     }
 
     .step {
-      min-height: 50vh;
+      min-height: 58vh;
+    }
+
+    .step-content {
+      background: rgba(248, 242, 223, 0.94);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 14px;
+      border: 1px solid rgba(190, 180, 170, 0.35);
+      box-shadow: 0 6px 24px rgba(42, 31, 26, 0.10);
+      padding: 14px 16px;
+      pointer-events: auto;
+    }
+
+    .step-content h3 {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .step-body p {
+      font-size: 0.95rem;
+      line-height: 1.55;
     }
   }
 
