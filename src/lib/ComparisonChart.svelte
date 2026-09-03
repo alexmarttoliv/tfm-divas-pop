@@ -337,8 +337,10 @@
         <p class="chart-block-desc">Las 6 emociones de Ekman · valores medios (0–1)</p>
         <div class="radar-container">
           <svg
-            width={RADAR_SIZE} height={RADAR_SIZE}
+            width="100%"
+            style="max-width: {RADAR_SIZE}px; height: auto;"
             viewBox="0 0 {RADAR_SIZE} {RADAR_SIZE}"
+            preserveAspectRatio="xMidYMid meet"
           >
             <!-- Grid hexagonal (reto) -->
             {#each Array(RADAR_LEVELS) as _, lv}
@@ -561,7 +563,11 @@
   .slots-area {
     display: grid;
     grid-template-columns: repeat(3, 1fr) 1.1fr;
-    grid-auto-rows: 150px;
+    /* Era grid-auto-rows: 150px — altura travada. O painel "Prueba esto" é um
+       item desse grid; quando o texto dos botões quebra em mais linhas (telas
+       estreitas), o conteúdo passava de 150px e vazava para fora da caixa
+       tracejada. Com minmax a linha cresce só quando precisa. */
+    grid-auto-rows: minmax(150px, auto);
     gap: 0.75rem;
     align-items: stretch;
     flex-shrink: 0;
@@ -599,7 +605,7 @@
   .suggestions-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-auto-rows: minmax(2.6rem, auto);
     gap: 0.35rem;
     flex: 1;
   }

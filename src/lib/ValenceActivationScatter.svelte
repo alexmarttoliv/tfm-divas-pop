@@ -17,7 +17,20 @@
   let width = 600;
   let height = 800;
 
-  const margin = { top: 100, right: 80, bottom: 60, left: 80 };
+  $: isNarrow = width < 700;
+
+  // SVG não tem z-index: quem é desenhado por último fica por cima. Sem isso, o
+  // item selecionado (que aumenta de escala) ficava escondido atrás dos vizinhos.
+  $: paintOrderedNodes = pinnedId
+    ? [...nodes.filter(n => n.id !== pinnedId), ...nodes.filter(n => n.id === pinnedId)]
+    : nodes;
+
+  $: margin = {
+    top: isNarrow ? 56 : 100,
+    right: isNarrow ? 26 : 80,
+    bottom: isNarrow ? 46 : 60,
+    left: isNarrow ? 34 : 80
+  };
   const ticks = [-1, 1];
 
     /* ── CORES POR EMOÇÃO ── */
@@ -589,7 +602,7 @@
     <div bind:this={container} style="width: 100%; flex: 1; min-height: 0;">
       <svg
         {width} {height}
-        style="display:block;"
+        style="display:block; max-width:100%;"
         role="presentation"
         on:click={clickBackground}
         on:keydown={(e) => e.key === 'Escape' && clickBackground()}
@@ -678,8 +691,12 @@
         <!-- Labels dos quadrantes -->
         {#each qLabels as q}
           <text text-anchor="middle">
-            <tspan x={q.x} y={q.y} class="quadrant-sub">{q.sub}</tspan>
-            <tspan x={q.x} dy="20" class="quadrant-main">{q.main}</tspan>
+            <!-- Os sublabels ("ALTA ACTIVACIÓN · VALENCIA NEGATIVA") são longos e
+                 colidem através do eixo em tela estreita; ficam só os nomes curtos. -->
+            {#if !isNarrow}
+              <tspan x={q.x} y={q.y} class="quadrant-sub">{q.sub}</tspan>
+            {/if}
+            <tspan x={q.x} y={isNarrow ? q.y : undefined} dy={isNarrow ? 0 : 20} class="quadrant-main">{q.main}</tspan>
           </text>
         {/each}
 
@@ -688,7 +705,7 @@
         <g class="nodes-group" class:fading={isTransitioning}>
 
           {#if viewMode === 'cancion'}
-            {#each nodes as d (d.id)}
+            {#each paintOrderedNodes as d (d.id)}
               <circle
                 cx={d.x} cy={d.y}
                 r={pinnedId === d.id ? 8 : hoveredId === d.id ? 7 : 4}
@@ -714,7 +731,7 @@
             {/each}
 
           {:else if viewMode === 'album'}
-            {#each nodes as d (d.id)}
+            {#each paintOrderedNodes as d (d.id)}
               {@const isActive  = pinnedId === d.id}
               {@const inFilter  = !hasActiveFilters || activeIds.has(d.id)}
               {@const r = RADIUS.album}
@@ -766,7 +783,7 @@
 
 
           {:else}
-            {#each nodes as d (d.id)}
+            {#each paintOrderedNodes as d (d.id)}
               {@const isActive  = pinnedId === d.id}
               {@const inFilter  = !hasActiveFilters || activeIds.has(d.id)}
               {@const r = RADIUS.artista}
@@ -1062,6 +1079,23 @@
   box-sizing: border-box;
 }
 
+/* O Safari (iPhone/iPad) desenha um anel de foco azul ao tocar em elementos
+   focáveis — daí o "quadrado azul" que não aparece no desktop, onde o anel só
+   surge na navegação por teclado. Removemos o anel no toque mas mantemos o
+   :focus-visible, para quem navega de teclado continuar enxergando o foco. */
+.nodes-group g {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nodes-group g:focus {
+  outline: none;
+}
+
+.nodes-group g:focus-visible {
+  outline: 2px solid #1a1a1a;
+  outline-offset: 2px;
+}
+
 .filter-input:focus,
 .filter-select:focus {
   border-color: #a89e96;
@@ -1322,6 +1356,7 @@
   font-size: 14px;
   color: #1a1a1a;
   margin-bottom: 2px;
+  padding-right: 26px;
 }
 
 .tooltip-artist,
@@ -1389,14 +1424,19 @@
 .tooltip.pinned {
   border-color: rgba(190, 180, 170, 0.8);
   box-shadow: 0 12px 40px rgba(42, 31, 26, 0.22);
+  /* O .tooltip base tem pointer-events:none para não atrapalhar o hover no gráfico.
+     Fixado, porém, isso fazia o toque no ✕ atravessar o card e acertar um ponto
+     do scatter atrás dele. Fixado precisa receber cliques. */
+  pointer-events: auto;
 }
 
 .tooltip-close {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 22px;
-  height: 22px;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  z-index: 2;
   border-radius: 50%;
   border: none;
   background: rgba(190, 180, 170, 0.25);
@@ -1530,5 +1570,59 @@
   font-weight: 600;
   margin-left: 4px;
   letter-spacing: 0.02em;
+}
+/* ── TELAS ESTREITAS ──
+   Este componente não tinha nenhum breakpoint. Os selects têm min-width: 160px,
+   e junto com rótulos e o switcher de modo a linha ultrapassava a largura da tela. */
+@media (max-width: 700px) {
+  /* O header é uma linha flex (título | switcher). Numa tela estreita o switcher
+     era empurrado para fora da borda direita; empilhando, os dois cabem. */
+  .chart-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 0 12px 8px;
+  }
+
+  .filters-panel {
+    gap: 10px 12px;
+    padding: 10px 12px 12px;
+  }
+
+  .filter-group {
+    min-width: 0;
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .emotion-group {
+    flex-basis: 100%;
+  }
+
+  .filter-input,
+  .filter-select {
+    min-width: 0;
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .view-mode-switcher {
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .mode-btn {
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+
+  .emotion-pill {
+    font-size: 11px;
+    padding: 4px 9px;
+  }
+
+  :global(.quadrant-main) {
+    font-size: 13px;
+  }
 }
 </style>
